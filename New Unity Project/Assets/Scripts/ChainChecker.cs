@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class ChainChecker
 {
-	//private bool isFiveInChain, isFourInChian, isThreeInChain, isTwoInChain;
-	private bool isFiveInChain, isThreeInChain;
+	private bool isFiveInChain;
 	private int sum;
 	private int BOARD_SIZE;
 	private int SHIFTING_OFFSET;
@@ -16,11 +15,11 @@ public class ChainChecker
 	// constructor.
 	public ChainChecker(int size)
 	{
-		//isFiveInChain = false;
+		isFiveInChain = false;
 		//isFourInChian = false;
 		//isThreeInChain = false;
 		//isTwoInChain = false;
-		isThreeInChain = false;
+		//isThreeInChain = false;
 		BOARD_SIZE = size;
 	}
 
@@ -46,58 +45,6 @@ public class ChainChecker
 		}
 		return isFiveInChain;
 	}
-
-	/*public Stack<int> isThreePieceChain(GomokuPiece[,] gomokuPieces, int X, int Y)
-	{
-		SHIFTING_OFFSET = 2;
-		Mask = 7; // 111
-		DirectionIndexes.Clear();
-		if (checkLeftToRightDiagonal (gomokuPieces, X, Y)) 
-		{
-			isThreeInChain = true;
-			DirectionIndexes.Push (2);
-		}
-		if (checkVertical (gomokuPieces, X, Y)) 
-		{
-			isThreeInChain = true;
-			DirectionIndexes.Push (3);
-		}
-		if (checkRightToLeftDiagonal (gomokuPieces, X, Y)) 
-		{
-			isThreeInChain = true;
-			DirectionIndexes.Push (4);
-		}
-		if (checkHorizontal (gomokuPieces, X, Y)) 
-		{
-			isThreeInChain = true;
-			DirectionIndexes.Push (1);
-		}
-		return DirectionIndexes;
-	}*/
-
-	/*public bool hasToBlock(GomokuPiece[,] gomokuPieces, int X, int Y)
-	{
-		SHIFTING_OFFSET = 4;
-		int [] Masks = new int[]{15, 23, 27, 29}; //1111, 10111, 11011, 11101
-		if (checkLeftToRightDiagonal (gomokuPieces, X, Y)) 
-		{
-			won = true;
-		}
-		if (checkVertical (gomokuPieces, X, Y)) 
-		{
-			won = true;
-		}
-		if (checkRightToLeftDiagonal (gomokuPieces, X, Y)) 
-		{
-			won = true;
-		}
-		if (checkHorizontal (gomokuPieces, X, Y)) 
-		{
-			won = true;
-		}
-
-		return won;
-	}*/
 		
 	private bool checkLeftToRightDiagonal(GomokuPiece[,] gomokuPieces, int X, int Y)
 	{
@@ -261,3 +208,55 @@ public class ChainChecker
 		return DirectionIndexes;
 	}
 */
+
+/*public Stack<int> isThreePieceChain(GomokuPiece[,] gomokuPieces, int X, int Y)
+{
+	SHIFTING_OFFSET = 2;
+	Mask = 7; // 111
+	DirectionIndexes.Clear();
+	if (checkLeftToRightDiagonal (gomokuPieces, X, Y)) 
+	{
+		isThreeInChain = true;
+		DirectionIndexes.Push (2);
+	}
+	if (checkVertical (gomokuPieces, X, Y)) 
+	{
+		isThreeInChain = true;
+		DirectionIndexes.Push (3);
+	}
+	if (checkRightToLeftDiagonal (gomokuPieces, X, Y)) 
+	{
+		isThreeInChain = true;
+		DirectionIndexes.Push (4);
+	}
+	if (checkHorizontal (gomokuPieces, X, Y)) 
+	{
+		isThreeInChain = true;
+		DirectionIndexes.Push (1);
+	}
+	return DirectionIndexes;
+}*/
+
+/*public bool hasToBlock(GomokuPiece[,] gomokuPieces, int X, int Y)
+{
+	SHIFTING_OFFSET = 4;
+	int [] Masks = new int[]{15, 23, 27, 29}; //1111, 10111, 11011, 11101
+	if (checkLeftToRightDiagonal (gomokuPieces, X, Y)) 
+	{
+		won = true;
+	}
+	if (checkVertical (gomokuPieces, X, Y)) 
+	{
+		won = true;
+	}
+	if (checkRightToLeftDiagonal (gomokuPieces, X, Y)) 
+	{
+		won = true;
+	}
+	if (checkHorizontal (gomokuPieces, X, Y)) 
+	{
+		won = true;
+	}
+
+	return won;
+}*/

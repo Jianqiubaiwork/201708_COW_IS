@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class ArtificialIntelligence
 {
-	//private Random rnd = new Random();
 	private List<Vector3> neighborTilesCoordinates = new List<Vector3>();
 	private List<Vector3> adjacentAllyTilesCoordinates = new List<Vector3>();
 	private List<int> adjacentAllyTilesDirections = new List<int> ();
 	private Vector3 neighborTileCoordinate, allyTileCoordinate;
 	private int allyTileDirection;
 	private int BOARD_SIZE, SHIFTING_OFFSET;
-	//private bool hasFourPieceChain, hasThreePieceChain, hasTwoPieceChain;
-	//private ChainChecker chainChecker;
-	//private const Vector3 zeroVector3 = Vector3.zero;
 
 	// constructor
 	public ArtificialIntelligence(int size)
@@ -41,43 +37,7 @@ public class ArtificialIntelligence
 			}
 		}
 	}
-
-	private void findAdjacentAllyTilesCoordinates(GomokuPiece[,] gomokuPieces, int X, int Y)
-	{
-		adjacentAllyTilesCoordinates.Clear ();
-		for (int i = -1; i <=1; i++)
-		{
-			for (int j = -1; j <= 1; j++) 
-			{
-				if (((X + i) >= 0) && 
-					((Y + j) >= 0) && 
-					((X + i) < BOARD_SIZE) && 
-					((Y + j) < BOARD_SIZE) &&
-					((X + i) != (Y + j)) &&
-					gomokuPieces[X+i,Y+i].isWhite == gomokuPieces[X,Y].isWhite) 
-				{
-					allyTileCoordinate.x = X + i;
-					allyTileCoordinate.z = Y + j;
-					adjacentAllyTilesCoordinates.Add (allyTileCoordinate);
-					//adjacentAllyTilesDirections.Add ();
-				}
-			}
-		}
-	}
-
-	/*public Vector3 place(GomokuPiece[,] gomokuPieces, int X, int Y)
-	{
-		findAdjacentAllyTilesCoordinates (gomokuPieces, X, Y);
-		if (adjacentAllyTilesCoordinates.Count == 0) // NO adjacent ally tiles.
-		{ 
-			return randomPlace (gomokuPieces, X, Y);
-		} 
-		else 
-		{
-			
-		}
-	}*/
-
+		
 	public Vector3 randomPlace(GomokuPiece[,] gomokuPieces, int X, int Y)
 	{
 		int index, neighborX, neighborY;
@@ -109,12 +69,49 @@ public class ArtificialIntelligence
 			return neighborTileCoordinate;
 		}
 	}
+}
 
-	// block for two-piece chain
-	//public Vector3 blockTwoPieceChain(){}
+/*private void findAdjacentAllyTilesCoordinates(GomokuPiece[,] gomokuPieces, int X, int Y)
+	{
+		adjacentAllyTilesCoordinates.Clear ();
+		for (int i = -1; i <=1; i++)
+		{
+			for (int j = -1; j <= 1; j++) 
+			{
+				if (((X + i) >= 0) && 
+					((Y + j) >= 0) && 
+					((X + i) < BOARD_SIZE) && 
+					((Y + j) < BOARD_SIZE) &&
+					((X + i) != (Y + j)) &&
+					gomokuPieces[X+i,Y+i].isWhite == gomokuPieces[X,Y].isWhite) 
+				{
+					allyTileCoordinate.x = X + i;
+					allyTileCoordinate.z = Y + j;
+					adjacentAllyTilesCoordinates.Add (allyTileCoordinate);
+					//adjacentAllyTilesDirections.Add ();
+				}
+			}
+		}
+	}*/
 
-	// block for three-peice chain
-	/*public Vector3 blockThreePieceChain(GomokuPiece[,] gomokuPieces, int X, int Y)
+/*public Vector3 place(GomokuPiece[,] gomokuPieces, int X, int Y)
+{
+	findAdjacentAllyTilesCoordinates (gomokuPieces, X, Y);
+	if (adjacentAllyTilesCoordinates.Count == 0) // NO adjacent ally tiles.
+	{ 
+		return randomPlace (gomokuPieces, X, Y);
+	} 
+	else 
+	{
+
+	
+
+
+// block for two-piece chain
+//public Vector3 blockTwoPieceChain(){}
+
+// block for three-peice chain
+/*public Vector3 blockThreePieceChain(GomokuPiece[,] gomokuPieces, int X, int Y)
 	{
 		SHIFTING_OFFSET = 2;
 		DirectionIndexes = chainChecker.isThreePieceChain (gomokuPieces, X, Y);
@@ -124,5 +121,4 @@ public class ArtificialIntelligence
 		}
 	}*/
 
-	// block for four-peice chain
-}
+// block for four-peice chain
