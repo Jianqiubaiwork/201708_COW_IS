@@ -2,27 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChainChecker : ArtificialIntelligence
+public class ChainChecker : MonoBehaviour
 {
-	private int SHIFTING_OFFSET, Mask, sum;
+	private int BOARD_SIZE;
+	private int SHIFTING_OFFSET;
+	private int Mask;
+	private int sum;
+	private int X;
+	private int Y;
+	private int[,] boardSituation;
 	private bool isFiveInChain;
 
-	public ChainChecker()
+	public static ChainChecker chainCheckerInstance { set; get; }
+		
+	private void Start()
 	{
-		isFiveInChain = false;
-		SHIFTING_OFFSET = 0;
-		Mask = 0;
-		sum = 0;
+		BOARD_SIZE = BoardManager.BOARD_SIZE;
+		chainCheckerInstance = this;
 	}
 
-	public override void GetData()
+	private void Update()
 	{
-		base.GetData ();
+		X = BoardManager.boardManagerInstance.X;
+		Y = BoardManager.boardManagerInstance.Y;
+		boardSituation = BoardManager.boardManagerInstance.boardSituation;
 	}
-		
+
 	public bool IsFiveInChain()
 	{
-		GetData ();
 		SHIFTING_OFFSET = 4;
 		Mask = 31; // 11111
 		if (CheckLeftToRightDiagonal ()) 

@@ -2,34 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArtificialIntelligence
+public class ArtificialIntelligence : MonoBehaviour
 {
+	private int BOARD_SIZE;
 	private List<Vector3> neighborTilesCoordinates = new List<Vector3>();
 	private List<Vector3> adjacentAllyTilesCoordinates = new List<Vector3>();
 	private List<int> adjacentAllyTilesDirections = new List<int> ();
 	private Vector3 neighborTileCoordinate, allyTileCoordinate;
 	private int allyTileDirection;
 
-	protected int BOARD_SIZE { set; get; }
-	protected int X { set; get; }
-	protected int Y { set; get; }
-	protected int[,] boardSituation { set; get; }
+	public int X { set; get; }
+	public int Y { set; get; }
+	public int[,] boardSituation { set; get; }
+	public static ArtificialIntelligence AI_Instance { set; get; }
 
-	public ArtificialIntelligence()
+
+	private void Start()
 	{
 		BOARD_SIZE = BoardManager.BOARD_SIZE;
+		AI_Instance = this;
 	}
 
-	public virtual void GetData()
+	private void Update()
 	{
-		X = BoardManager.instance.X;
-		Y = BoardManager.instance.Y;
-		boardSituation = BoardManager.instance.boardSituation;
+		X = BoardManager.boardManagerInstance.X;
+		Y = BoardManager.boardManagerInstance.Y;
+		boardSituation = BoardManager.boardManagerInstance.boardSituation;
 	}
 
 	private void FindNeighborTilesCoordinates()
 	{
-		GetData ();
 		neighborTilesCoordinates.Clear ();
 		for (int i = -1; i <=1; i++)
 		{
@@ -81,7 +83,7 @@ public class ArtificialIntelligence
 		}
 	}
 
-	private int alphabeta(node?, int depth, int a, int b, bool isMaximizingPlayer)
+	/*private int alphabeta(node?, int depth, int a, int b, bool isMaximizingPlayer)
 	{
 		GetData ();
 		// base case.
@@ -125,7 +127,7 @@ public class ArtificialIntelligence
 
 	private List<int[,]> getChildBoardSituations(int[,] boardSituation)
 	{
-	}
+	}*/
 
 	private int max(int a, int value)
 	{
@@ -149,6 +151,7 @@ public class ArtificialIntelligence
 		{
 			return value;
 		}
+	}
 }
 	/*public int minimax(LinkedListNode node, int depth, bool isMaximizingPlayer)
 	{

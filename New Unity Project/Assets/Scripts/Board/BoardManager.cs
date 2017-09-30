@@ -5,15 +5,12 @@ using UnityEngine;
 public class BoardManager : MonoBehaviour 
 {
 	// variables
-	private const int GAME_MODE = 2; // 1 for Human vs. PC; 2 for PC vs. PC
+	private const int GAME_MODE = 1; // 1 for Human vs. PC; 2 for PC vs. PC
 	private const float TILE_SIZE = 1.0f;
 	private const float TILE_OFFSET = 0.5f;
 	private bool isWhiteTurn;
 	private bool isWon;
 	private Vector3 position;
-	private ArtificialIntelligence AI;
-	private ChainChecker chainChecker;
-	private Summerizor summerizor;
 
 	public const int BOARD_SIZE = 15;
 	public int[,] boardSituation{ set; get; }
@@ -21,7 +18,7 @@ public class BoardManager : MonoBehaviour
 	public int Y{ set; get; }
 
 	public List<GameObject> stonesPrefabs; // holds the black and white gomoku peice prefab
-	public static BoardManager instance { set; get; }
+	public static BoardManager boardManagerInstance { set; get; }
 
 	// start the game
 	private void Start()
@@ -32,10 +29,7 @@ public class BoardManager : MonoBehaviour
 		X = -1;
 		Y = -1;
 		boardSituation = new int[BOARD_SIZE, BOARD_SIZE];
-		instance = this;
-		AI = new ArtificialIntelligence ();
-		chainChecker = new ChainChecker ();
-		summerizor = new Summerizor ();
+		boardManagerInstance = this;
 
 		if (GAME_MODE == 2) 
 		{
@@ -130,7 +124,7 @@ public class BoardManager : MonoBehaviour
 
 	private void PlaceStoneByPC()
 	{
-		position = AI.RandomPlace ();
+		position = ArtificialIntelligence.AI_Instance.RandomPlace ();
 		X = (int)position.x;
 		Y = (int)position.z;
 		PlaceStone (X, Y);
@@ -157,6 +151,9 @@ public class BoardManager : MonoBehaviour
 				Quaternion.identity
 			) as GameObject;
 
+		// update moves in summerizor
+		Summerizor.summerizorInstance.movesNum++;
+
 		// record the GameObject into the implicit 2D GomokuPieces matrix.
 		if (isWhiteTurn)
 		{
@@ -167,9 +164,8 @@ public class BoardManager : MonoBehaviour
 			boardSituation [X, Y] = -1;
 		}
 			
-		if (chainChecker.IsFiveInChain()) 
+		if (ChainChecker.chainCheckerInstance.IsFiveInChain()) 
 		{
-			Debug.Log ("You Win!");
 			isWon = true;
 			return;
 		} 
