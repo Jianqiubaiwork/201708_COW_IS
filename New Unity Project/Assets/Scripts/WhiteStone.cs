@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WhitePiece : GomokuPiece 
+public class WhiteStone : Stones 
 {
-	
 }

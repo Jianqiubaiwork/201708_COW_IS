@@ -4,106 +4,70 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour 
 {
-	// private default variables.
-	private const int BOARD_SIZE = 15;
-	private const int GAME_MODE = 1; // 1 for human vs pc, 2 for pc vs pc
+	// variables
+	private const int GAME_MODE = 2; // 1 for Human vs. PC; 2 for PC vs. PC
 	private const float TILE_SIZE = 1.0f;
 	private const float TILE_OFFSET = 0.5f;
-
 	private bool isWhiteTurn;
-	private bool won;
-	private Vector3 position = Vector3.zero;
+	private bool isWon;
+	private Vector3 position;
+	private ArtificialIntelligence AI;
+	private ChainChecker chainChecker;
+	private Summerizor summerizor;
 
-	// construct new children class.
-	private ChainChecker chainChecker = new ChainChecker (BOARD_SIZE);
-	private ArtificialIntelligence AI = new ArtificialIntelligence (BOARD_SIZE);
-	private GomokuPiece currentGomokuPiece; //abstract
-
-	// public variables.
-	public GomokuPiece[,] GomokuPieces{ set; get; }
+	public const int BOARD_SIZE = 15;
+	public int[,] boardSituation{ set; get; }
 	public int X{ set; get; }
 	public int Y{ set; get; }
-	public List<GameObject> gomokuPiecesPrefabs; // holds the black and white gomoku peice prefab.
 
-	// start.
+	public List<GameObject> stonesPrefabs; // holds the black and white gomoku peice prefab
+	public static BoardManager instance { set; get; }
+
+	// start the game
 	private void Start()
 	{
-		won = false;
+		// initilizations
 		isWhiteTurn = false;
-		GomokuPieces = new GomokuPiece[(BOARD_SIZE), (BOARD_SIZE)];
+		isWon = false;
+		X = -1;
+		Y = -1;
+		boardSituation = new int[BOARD_SIZE, BOARD_SIZE];
+		instance = this;
+		AI = new ArtificialIntelligence ();
+		chainChecker = new ChainChecker ();
+		summerizor = new Summerizor ();
 
 		if (GAME_MODE == 2) 
 		{
-			X = BOARD_SIZE / 2;
-			Y = BOARD_SIZE / 2;
-			AddGomokuPiece (X, Y);
+			X = (int)BOARD_SIZE / 2;
+			Y = (int)BOARD_SIZE / 2;
+			PlaceStone (X, Y);
 		}
 	}
 
-	// update the game frame.
 	private void Update()
 	{
 		DrawBoard ();
-		if (!won) 
+		if (!isWon) 
 		{
 			switch (GAME_MODE) 
 			{
 			case 1:
-				HumanvsPC ();
+				PlaceStoneByHuman ();
+				if (isWhiteTurn) 
+				{
+					PlaceStoneByPC ();
+				}
 				break;
 			case 2:
-				PCvsPC ();
+				PlaceStoneByPC ();
 				break;
 			default:
 				break;
 			}
-		} 
-		else return;
-	}
-
-	// update the selection when the mouse moves.
-	private void HumanvsPC()
-	{
-		if (!Camera.main)
-			return;
-
-		if (!isWhiteTurn) 
-		{
-			RaycastHit hit; 
-			if (Physics.Raycast (
-				Camera.main.ScreenPointToRay (Input.mousePosition), 
-				out hit, 100.0f, LayerMask.GetMask ("GomokuPlane"))) 
-			{
-				X = (int)hit.point.x;
-				Y = (int)hit.point.z;
-				if (GomokuPieces [X, Y] == null && Input.GetMouseButtonDown (0)) 
-				{
-					AddGomokuPiece (X, Y);
-				}
-
-			} 
-			else 
-			{
-				X = -1;
-				Y = -1;
-			}
-		} 
-		else 
-		{
-			position = AI.randomPlace (GomokuPieces, X, Y);
-			AddGomokuPiece ((int)position.x, (int)position.z);
 		}
 	}
 
-	private void PCvsPC()
-	{
-		position = AI.randomPlace (GomokuPieces, X, Y);
-		X = (int)position.x;
-		Y = (int)position.z;
-		AddGomokuPiece (X, Y);
-	}
-
-	// draw the board.
 	private void DrawBoard()
 	{
 		// set the width and the heigth of the board.
@@ -139,33 +103,74 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-	private void AddGomokuPiece(int X, int Y)
+	private void PlaceStoneByHuman()
+	{
+		if (!Camera.main)
+			return;
+
+		RaycastHit hit; 
+		if (Physics.Raycast (
+			Camera.main.ScreenPointToRay (Input.mousePosition), 
+			out hit, 100.0f, LayerMask.GetMask ("GomokuPlane")) && !isWhiteTurn) 
+		{
+			X = (int)hit.point.x;
+			Y = (int)hit.point.z;
+			if (Input.GetMouseButtonDown (0) && boardSituation[X,Y] == 0) 
+			{			
+				PlaceStone (X, Y);
+			}
+
+		} 
+		else 
+		{
+			X = -1;
+			Y = -1;
+		}
+	}
+
+	private void PlaceStoneByPC()
+	{
+		position = AI.RandomPlace ();
+		X = (int)position.x;
+		Y = (int)position.z;
+		PlaceStone (X, Y);
+	}
+
+	private void PlaceStone(int X, int Y)
 	{
 		// figure out whether a white or a black piece needed to be placed based on the turn.
 		int index;
 		if (isWhiteTurn) 
 		{
 			index = 0;
+		} 
+		else 
+		{
+			index = 1;
 		}
-		else index = 1;
 
 		// clone a gomoku piece from the prefab list and place in the scene.
-		GameObject gomokuPiece = Instantiate 
+		GameObject stone = Instantiate 
 			(
-				gomokuPiecesPrefabs [index], 
+				stonesPrefabs [index], 
 				GetTileCenter(X, Y), 
 				Quaternion.identity
 			) as GameObject;
 
 		// record the GameObject into the implicit 2D GomokuPieces matrix.
-		GomokuPieces [X, Y] = gomokuPiece.GetComponent<GomokuPiece> ();
-
-		// check winning
-		if (chainChecker.isWon (GomokuPieces, X, Y)) 
+		if (isWhiteTurn)
 		{
-			// display winning massage
-			Debug.Log ("You won!");
-			won = true;
+			boardSituation [X, Y] = 1;
+		}
+		else
+		{
+			boardSituation [X, Y] = -1;
+		}
+			
+		if (chainChecker.IsFiveInChain()) 
+		{
+			Debug.Log ("You Win!");
+			isWon = true;
 			return;
 		} 
 		else 
@@ -174,11 +179,11 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-	private Vector3 GetTileCenter(int x, int y)
+	private Vector3 GetTileCenter(int X, int Y)
 	{
 		position = Vector3.zero;
-		position.x += (TILE_SIZE * x) + TILE_OFFSET;
-		position.z += (TILE_SIZE * y) + TILE_OFFSET;
+		position.x += (TILE_SIZE * X) + TILE_OFFSET;
+		position.z += (TILE_SIZE * Y) + TILE_OFFSET;
 		return position;
 	}
 }

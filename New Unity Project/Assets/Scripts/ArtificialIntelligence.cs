@@ -9,16 +9,27 @@ public class ArtificialIntelligence
 	private List<int> adjacentAllyTilesDirections = new List<int> ();
 	private Vector3 neighborTileCoordinate, allyTileCoordinate;
 	private int allyTileDirection;
-	private int BOARD_SIZE, SHIFTING_OFFSET;
 
-	// constructor
-	public ArtificialIntelligence(int size)
+	protected int BOARD_SIZE { set; get; }
+	protected int X { set; get; }
+	protected int Y { set; get; }
+	protected int[,] boardSituation { set; get; }
+
+	public ArtificialIntelligence()
 	{
-		BOARD_SIZE = size;
+		BOARD_SIZE = BoardManager.BOARD_SIZE;
 	}
 
-	private void findNeighborTilesCoordinates(int X, int Y)
+	public virtual void GetData()
 	{
+		X = BoardManager.instance.X;
+		Y = BoardManager.instance.Y;
+		boardSituation = BoardManager.instance.boardSituation;
+	}
+
+	private void FindNeighborTilesCoordinates()
+	{
+		GetData ();
 		neighborTilesCoordinates.Clear ();
 		for (int i = -1; i <=1; i++)
 		{
@@ -37,17 +48,17 @@ public class ArtificialIntelligence
 			}
 		}
 	}
-		
-	public Vector3 randomPlace(GomokuPiece[,] gomokuPieces, int X, int Y)
+
+	public Vector3 RandomPlace()
 	{
 		int index, neighborX, neighborY;
-		findNeighborTilesCoordinates (X, Y);
+		FindNeighborTilesCoordinates ();
 		if (neighborTilesCoordinates.Count != 0) 
 		{
 			index = Random.Range (0, neighborTilesCoordinates.Count);
 			neighborX = (int)neighborTilesCoordinates [index].x;
 			neighborY = (int)neighborTilesCoordinates [index].z;
-			while (gomokuPieces [neighborX, neighborY] != null) 
+			while (boardSituation [neighborX, neighborY] != 0) 
 			{
 				index = Random.Range (0, neighborTilesCoordinates.Count);
 				neighborX = (int)neighborTilesCoordinates [index].x;
@@ -59,7 +70,7 @@ public class ArtificialIntelligence
 		{
 			neighborX = Random.Range (0, BOARD_SIZE);
 			neighborY = Random.Range (0, BOARD_SIZE);
-			while (gomokuPieces [neighborX, neighborY] != null) 
+			while (boardSituation [neighborX, neighborY] != 0) 
 			{
 				neighborX = Random.Range (0, BOARD_SIZE);
 				neighborY = Random.Range (0, BOARD_SIZE);
@@ -69,9 +80,129 @@ public class ArtificialIntelligence
 			return neighborTileCoordinate;
 		}
 	}
-}
 
-/*private void findAdjacentAllyTilesCoordinates(GomokuPiece[,] gomokuPieces, int X, int Y)
+	private int alphabeta(node?, int depth, int a, int b, bool isMaximizingPlayer)
+	{
+		GetData ();
+		// base case.
+		if ((depth == 0) || terminalNode?)
+		{
+			return heuristic(boardSituation);
+		}
+
+		List<int[,]> childBoardSituations = new List<int[,]> ();
+		childBoardSituations = getChildBoardSituations(boardSituation);
+
+		if (isMaximizingPlayer)
+		{
+			foreach (int[,] childBoardSituation in childBoardSituations)
+			{
+				a = max(a, alphabeta(childBoardSituation, depth - 1, a, b, false));
+
+				if (a >= b) break; //prune
+			}
+			return a;
+		}
+		else if (!isMaximizingPlayer)
+		{
+			foreach (int[,] childBoardSituation in childBoardSituations)
+			{
+				b = min(b, alphabeta(childBoardSituation, depth - 1, a, b, true));
+
+				if (a >= b) break; //prune
+			}
+			return b;
+		}
+	}
+
+	private bool isWon(int[,] boardSituation)
+	{
+	}
+
+	private int heuristic(int[,] boardSituation)
+	{
+	}
+
+	private List<int[,]> getChildBoardSituations(int[,] boardSituation)
+	{
+	}
+
+	private int max(int a, int value)
+	{
+		if (a >= value) 
+		{
+			return a;
+		} 
+		else 
+		{
+			return value;
+		}
+	}
+
+	private int min(int b, int value)
+	{
+		if (b <= value) 
+		{
+			return b;
+		} 
+		else 
+		{
+			return value;
+		}
+}
+	/*public int minimax(LinkedListNode node, int depth, bool isMaximizingPlayer)
+	{
+		int bestValue, value;
+
+		// base case.
+		if ((depth == 0) || (node == Terminal node))
+		{
+			reutrn heuristicvalue;
+		}
+
+		if (isMaximizingPlayer)
+		{
+			bestValue = -inf;
+			foreach (child in node)
+			{
+				value = minimax(child, depth - 1, false);
+				bestValue = max(bestValue, value);
+			}
+			return bestValue;
+		}
+		else if (!isMaximizingPlayer)
+		{
+			bestValue = inf;
+			foreach (child in node)
+			{
+				value = minimax(child, depth - 1, true);
+				bestValue = min(bestValue, value);
+			}
+			return bestValue;
+		}
+	}*/
+
+	/*
+}
+/*
+	// block for two-piece chain
+	//public Vector3 blockTwoPieceChain(){}
+
+	// block for three-peice chain
+	/*public Vector3 blockThreePieceChain(GomokuPiece[,] gomokuPieces, int X, int Y)
+	{
+		SHIFTING_OFFSET = 2;
+		DirectionIndexes = chainChecker.isThreePieceChain (gomokuPieces, X, Y);
+		if (DirectionIndexes.Count != 0) // has tree piece chain.
+		{
+			hasFourPieceChain = true;
+		}
+	}
+
+	// block for four-peice chain
+
+
+	private void findAdjacentAllyTilesCoordinates(GomokuPiece[,] gomokuPieces, int X, int Y)
 	{
 		adjacentAllyTilesCoordinates.Clear ();
 		for (int i = -1; i <=1; i++)
@@ -92,33 +223,17 @@ public class ArtificialIntelligence
 				}
 			}
 		}
-	}*/
+	}
 
-/*public Vector3 place(GomokuPiece[,] gomokuPieces, int X, int Y)
-{
-	findAdjacentAllyTilesCoordinates (gomokuPieces, X, Y);
-	if (adjacentAllyTilesCoordinates.Count == 0) // NO adjacent ally tiles.
-	{ 
-		return randomPlace (gomokuPieces, X, Y);
-	} 
-	else 
+	public Vector3 place(GomokuPiece[,] gomokuPieces, int X, int Y)
 	{
-
-	
-
-
-// block for two-piece chain
-//public Vector3 blockTwoPieceChain(){}
-
-// block for three-peice chain
-/*public Vector3 blockThreePieceChain(GomokuPiece[,] gomokuPieces, int X, int Y)
-	{
-		SHIFTING_OFFSET = 2;
-		DirectionIndexes = chainChecker.isThreePieceChain (gomokuPieces, X, Y);
-		if (DirectionIndexes.Count != 0) // has tree piece chain.
+		findAdjacentAllyTilesCoordinates (gomokuPieces, X, Y);
+		if (adjacentAllyTilesCoordinates.Count == 0) // NO adjacent ally tiles.
+		{ 
+			return randomPlace (gomokuPieces, X, Y);
+		} 
+		else 
 		{
-			hasFourPieceChain = true;
+			
 		}
 	}*/
-
-// block for four-peice chain

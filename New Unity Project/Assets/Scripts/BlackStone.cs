@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class GomokuPiece : MonoBehaviour 
+public class BlackStone : Stones 
 {
-	public bool isWhite;
-}
+}	
