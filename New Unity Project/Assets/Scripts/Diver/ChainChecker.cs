@@ -11,44 +11,59 @@ public class ChainChecker : MonoBehaviour
 	private int X;
 	private int Y;
 	private int[,] boardSituation;
-	private bool isFiveInChain;
+	private bool isNInChain;
 
 	public static ChainChecker chainCheckerInstance { set; get; }
 		
-	private void Start()
+	private void Awake()
 	{
 		BOARD_SIZE = BoardManager.BOARD_SIZE;
 		chainCheckerInstance = this;
 	}
 
-	private void Update()
+	private void UpdateData()
 	{
 		X = BoardManager.boardManagerInstance.X;
 		Y = BoardManager.boardManagerInstance.Y;
 		boardSituation = BoardManager.boardManagerInstance.boardSituation;
 	}
 
-	public bool IsFiveInChain()
+	public bool IsWon()
 	{
-		SHIFTING_OFFSET = 4;
-		Mask = 31; // 11111
+		UpdateData ();
+		return IsNInChain (4, 31);
+	}
+
+	public bool IsEnd(int currentX, int currentY, int[,] currentBoardSituation)
+	{
+		X = currentX;
+		Y = currentY;
+		boardSituation = currentBoardSituation;
+		return IsNInChain (4, 31);
+	}
+
+	private bool IsNInChain(int _SHIFTING_OFFSET, int _Mask)
+	{
+		SHIFTING_OFFSET = _SHIFTING_OFFSET;
+		Mask = _Mask;
+		isNInChain = false;
 		if (CheckLeftToRightDiagonal ()) 
 		{
-			isFiveInChain = true;
+			isNInChain = true;
 		}
 		if (CheckVertical ()) 
 		{
-			isFiveInChain = true;
+			isNInChain = true;
 		}
 		if (CheckRightToLeftDiagonal ()) 
 		{
-			isFiveInChain = true;
+			isNInChain = true;
 		}
 		if (CheckHorizontal ()) 
 		{
-			isFiveInChain = true;
+			isNInChain = true;
 		}
-		return isFiveInChain;
+		return isNInChain;
 	}
 
 	private bool CheckLeftToRightDiagonal()
@@ -60,7 +75,7 @@ public class ChainChecker : MonoBehaviour
 			{
 				if (boardSituation [X + i, Y - i] == boardSituation [X, Y]) 
 				{
-					sum = sum | (1 << (4 - i));
+					sum = sum | (1 << (SHIFTING_OFFSET - i));
 				}
 			}
 		}
@@ -76,7 +91,7 @@ public class ChainChecker : MonoBehaviour
 			{
 				if (boardSituation [X, Y + i] == boardSituation [X, Y]) 
 				{
-					sum = sum | (1 << (4 - i));
+					sum = sum | (1 << (SHIFTING_OFFSET - i));
 				}
 			}
 		}
@@ -92,7 +107,7 @@ public class ChainChecker : MonoBehaviour
 			{
 				if (boardSituation [X - i, Y - i] == boardSituation [X, Y]) 
 				{
-					sum = sum | (1 << (4 - i));
+					sum = sum | (1 << (SHIFTING_OFFSET - i));
 				}
 			}
 		}
@@ -108,7 +123,7 @@ public class ChainChecker : MonoBehaviour
 			{
 				if (boardSituation [X + i, Y] == boardSituation [X, Y]) 
 				{
-					sum = sum | (1 << (4 - i));
+					sum = sum | (1 << (SHIFTING_OFFSET - i));
 				}
 			}
 		}
@@ -126,5 +141,19 @@ public class ChainChecker : MonoBehaviour
 			}
 		}
 		return false;
+	}
+
+	private void Display(int[,] boardSituation)
+	{
+		string content = "";
+		for (int i = 0; i < BOARD_SIZE; i++) 
+		{
+			for (int j = 0; j < BOARD_SIZE; j++)
+			{
+				content += boardSituation [j, i].ToString() + " ";
+			}
+			content += "\n";
+		}	
+		Debug.Log (content);
 	}
 }
