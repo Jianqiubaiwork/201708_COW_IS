@@ -1,2 +1,4 @@
-# 2_Academic_IS
-This is my personal Senior Independent Thesis. In this repository, a 3D Go-moku game is developed using Unity in C#. The game has three modes: human vs. computer, computer vs. computer and human vs. human. For the computer player, four AI strategies are implemented: the Greedy, the Minimax, the Neural Network and the random strategies. The human player can select different mode and different AI to play against.
+Artificial Intelligence implementation for Go-moku
+- Built a Go-moku board game using C# in Uunity, wrote an approxiamte 80-page report presenting the process of the project.
+- Implemented Minimax algorithm enhanced with Alpha-beta pruning as one game AI.
+- Simulated the computer playing against the computer and recorded the data. Utilized Neural Network to train the data to teach the computer to play the game.
